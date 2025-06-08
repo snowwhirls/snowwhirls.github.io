@@ -17,169 +17,295 @@
   <style>
     html,
     body {
-      height: 100%;
-      margin: 0;
-      padding: 0;
-      font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
-      background: #f8fafc;
-    }
-
-    body {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-      /* Riga map background from Wikimedia Commons, subtle overlay for readability */
       background-image: url('background.webp');
       background-size: cover;
-      background-position: center;
       background-repeat: no-repeat;
-      background-attachment: scroll;
-      /* Changed from fixed to scroll for better mobile support */
-      /* Add a semi-transparent white overlay for readability */
-      position: relative;
+      background-position: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 0;
     }
 
     body::before {
-      content: '';
-      position: absolute;
-      /* Changed from fixed to absolute */
+      content: "";
+      position: fixed;
+      /* Or absolute if you prefer */
       top: 0;
       left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(248, 250, 252, 0.75);
-      /* matches #f8fafc with opacity */
-      z-index: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(255, 255, 255, 0.7);
       pointer-events: none;
+      /* So you can still click links, etc. */
+      z-index: 0;
     }
 
-    /* Ensure content is above overlay */
     body>* {
       position: relative;
       z-index: 1;
     }
 
-    .controls-card {
-      background: #fff;
-      border-radius: 18px;
-      box-shadow: 0 4px 20px 0 rgba(30, 41, 59, 0.09);
-      padding: 2rem 2.5rem;
-      margin: 2rem 0 1rem 0;
-      display: flex;
-      gap: 1.8rem;
-      align-items: center;
-      flex-wrap: wrap;
+    .app-container {
+      width: 95vw;
+      position: center;
+      margin: 0 auto;
     }
 
-    .controls-card label {
-      font-size: 1rem;
-      color: #1e293b;
-      font-weight: 600;
-      margin-right: 0.5rem;
-    }
 
-    .modern-select {
-      appearance: none;
-      background: #f1f5f9 url('data:image/svg+xml;utf8,<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 8L10 12L14 8" stroke="%239ca3af" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>') no-repeat right 0.7em center/1.1em;
-      border: 1.5px solid #e2e8f0;
-      border-radius: 12px;
-      padding: 0.55em 2.2em 0.55em 1em;
-      font-size: 1em;
-      color: #334155;
-      outline: none;
-      min-width: 160px;
-      transition: border 0.2s, box-shadow 0.2s;
-      box-shadow: 0 1px 2px 0 rgba(16, 24, 40, 0.04);
-      cursor: pointer;
-    }
-
-    .modern-select:focus,
-    .modern-select:hover {
-      border-color: #60a5fa;
-      box-shadow: 0 2px 8px 0 rgba(96, 165, 250, 0.09);
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      margin-top: 20px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
     }
 
     #map {
-      width: 80vw;
       max-width: 900px;
-      height: 60vh;
-      min-height: 350px;
-      background: #e0e7ef;
-      border-radius: 22px;
-      box-shadow: 0 8px 36px 0 rgba(30, 41, 59, 0.13);
-      margin-bottom: 2.5rem;
-      margin-top: 1.5rem;
-      overflow: hidden;
+      max-height: 900px;
+      aspect-ratio: 1/1;
+
+      /* width: calc(100vw - 40px); */
+      margin: 20px auto;
+      /* box-sizing: border-box; */
+
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
     }
 
-    @media (max-width: 700px) {
-      .controls-card {
+    /* Responsive layout - automatically switches based on screen width */
+    .form-container {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 20px;
+    }
+
+    /* Large screens - Same line layout */
+    @media (min-width: 768px) {
+      .form-container {
+        flex-direction: row;
+        align-items: center;
+        gap: 30px;
+      }
+
+      .form-group {
+        flex: 1;
         flex-direction: column;
         align-items: stretch;
-        gap: 1rem;
-        padding: 1.3rem;
-      }
-
-      #map {
-        width: 95vw;
-        height: 45vh;
-        min-height: 210px;
+        gap: 12px;
       }
     }
 
-    /* Add specific styles for mobile orientation changes */
-    @media screen and (orientation: landscape) and (max-height: 500px) {
-      body {
-        min-height: 100vh;
-        background-size: cover;
-        background-position: center;
+    /* Small screens - Different lines layout */
+    @media (max-width: 767px) {
+      .form-container {
+        flex-direction: column;
       }
 
-      #map {
-        height: 50vh;
-        min-height: 200px;
+      .form-group {
+        flex-direction: row;
+        align-items: center;
+      }
+
+      .form-group:last-child {
+        margin-bottom: 0;
       }
     }
 
-    @media screen and (orientation: portrait) and (max-width: 700px) {
-      body {
-        min-height: 100vh;
-        background-size: cover;
-        background-position: center;
+    label {
+      font-weight: 600;
+      color: #4a5568;
+      font-size: 15px;
+      white-space: nowrap;
+      min-width: 90px;
+      letter-spacing: 0.025em;
+    }
+
+    /* Large screens - labels above dropdowns */
+    @media (min-width: 768px) {
+      label {
+        margin-bottom: 0;
+        min-width: auto;
+        font-size: 16px;
+      }
+    }
+
+    label {
+      font-weight: 600;
+      color: #4a5568;
+      font-size: 15px;
+      white-space: nowrap;
+      min-width: 90px;
+      letter-spacing: 0.025em;
+    }
+
+    /* Large screens - labels above dropdowns */
+    @media (min-width: 768px) {
+      label {
+        margin-bottom: 0;
+        min-width: auto;
+        font-size: 16px;
+      }
+    }
+
+    select {
+      padding: 16px 20px;
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      font-size: 16px;
+      background: #ffffff;
+      color: #2d3748;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      width: 100%;
+      box-sizing: border-box;
+      font-weight: 500;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+      background-position: right 16px center;
+      background-repeat: no-repeat;
+      background-size: 16px;
+      padding-right: 50px;
+    }
+
+    select:hover {
+      border-color: #cbd5e0;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    select:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+      transform: translateY(-1px);
+    }
+
+    select:active {
+      transform: translateY(0);
+    }
+
+    /* Custom option styling for modern browsers */
+    select option {
+      padding: 12px;
+      background: #ffffff;
+      color: #2d3748;
+    }
+
+    /* Subtle animation on load */
+    .form-group {
+      opacity: 0;
+      animation: fadeInUp 0.6s ease-out forwards;
+    }
+
+    .form-group:nth-child(1) {
+      animation-delay: 0.1s;
+    }
+
+    .form-group:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    .form-group:nth-child(3) {
+      animation-delay: 0.3s;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Mobile optimizations */
+    @media (max-width: 480px) {
+      .container {
+        padding: 24px;
+        margin: 10px;
+        border-radius: 16px;
+      }
+
+      h1 {
+        font-size: 2rem;
+      }
+
+      select {
+        padding: 14px 16px;
+        padding-right: 45px;
+        font-size: 16px;
+      }
+
+      label {
+        min-width: 80px;
+        font-size: 14px;
       }
     }
   </style>
 </head>
 
 <body>
-  <!--
-  To add another filter:
-  1. Copy paste one of the existing filter sections below (ensure unique IDs).
-  2. Copy-paste one of the init functions (initRenameYearSelect, initTriggerSelect, initThemeSelect)
-      and modify it accordingly. Please note that initRenameYearSelect compares integer values,
-      while initTriggerSelect and initThemeSelect compare string values.
-  3. Update the filter array in the initApp function to include the new filter.
-  4. (optional) Add into onEachFeature function the new property to display in the popup.
-  -->
-  <div class="controls-card">
-    <label for="rename-year-select">Year:</label>
-    <select id="rename-year-select" class="modern-select">
-      <option value="">Select year</option>
-    </select>
+  <div class="app-container">
+    <div class="container">
 
-    <label for="trigger-select">Trigger:</label>
-    <select id="trigger-select" class="modern-select">
-      <option value="">Select trigger</option>
-    </select>
+      <!--
+      To add another filter:
+      1. Copy paste one of the existing filter sections below (ensure unique IDs).
+      2. Copy-paste one of the init functions (initRenameYearSelect, initTriggerSelect, initThemeSelect)
+          and modify it accordingly. Please note that initRenameYearSelect compares integer values,
+          while initTriggerSelect and initThemeSelect compare string values.
+      3. Update the filter array in the initApp function to include the new filter.
+      4. (optional) Add into onEachFeature function the new property to display in the popup.
+      -->
 
-    <label for="theme-select">Theme:</label>
-    <select id="theme-select" class="modern-select">
-      <option value="">Select theme</option>
-    </select>
-  </div>
-  <div id='map'>Loading...</div>
+      <div class="form-container">
+
+        <div class="form-group">
+          <label for="rename-year-select">Year:</label>
+          <select id="rename-year-select" class="modern-select">
+            <option value="">Select year</option>
+          </select>
+        </div> <!-- form-group -->
+
+        <div class="form-group">
+          <label for="trigger-select">Trigger:</label>
+          <select id="trigger-select" class="modern-select">
+            <option value="">Select trigger</option>
+          </select>
+        </div> <!-- form-group -->
+
+        <div class="form-group">
+          <label for="theme-select">Theme:</label>
+          <select id="theme-select" class="modern-select">
+            <option value="">Select theme</option>
+          </select>
+        </div> <!-- form-group -->
+
+      </div> <!-- form-container -->
+
+    </div> <!-- container -->
+
+    <div id='map'>Loading...</div>
+  </div> <!-- app-container -->
 
   <script>
     // Collects distinct years from the GeoJSON features and populates the year select dropdown.
@@ -274,30 +400,10 @@
 
       const map = L.map('map').setView([56.947671425035125, 24.10682991450902], 12);
 
-      function handleOrientationChange() {
-        // Force a repaint of the background.
-        document.body.style.backgroundImage = 'none';
-
-        // Use requestAnimationFrame to ensure the style change is applied.
-        requestAnimationFrame(() => {
-          document.body.style.backgroundImage = "url('background.webp')";
-          setTimeout(map.invalidateSize, 100);
-        });
-      }
-
-      // Listen for orientation changes.
-      window.addEventListener('orientationchange', handleOrientationChange);
-
-      // Also listen for resize events as a fallback.
-      window.addEventListener('resize', () => {
-        setTimeout(map.invalidateSize, 100);
-      });
-
       const tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
         attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
       }).addTo(map);
-
 
       var geodataLayer;
       function updateGeoJSONLayer() {
