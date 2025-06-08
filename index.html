@@ -212,9 +212,6 @@
         'GeoJSON data loaded. Number of features:', geodata.features.length,
         'Filtered with renamed=true:', renamedStreets.features.length,
       );
-      // FIXME: Center the on the center of Riga.
-      // 1. Right click on gmaps and copy the coordinates.
-      // 2. Then tune the zoom level to look good.
       const map = L.map('map').setView([56.947671425035125, 24.10682991450902], 12);
 
       const tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
