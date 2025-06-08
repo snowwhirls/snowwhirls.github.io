@@ -35,13 +35,16 @@
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
+      background-attachment: scroll;
+      /* Changed from fixed to scroll for better mobile support */
       /* Add a semi-transparent white overlay for readability */
       position: relative;
     }
 
     body::before {
       content: '';
-      position: fixed;
+      position: absolute;
+      /* Changed from fixed to absolute */
       top: 0;
       left: 0;
       right: 0;
@@ -123,6 +126,28 @@
         width: 95vw;
         height: 45vh;
         min-height: 210px;
+      }
+    }
+
+    /* Add specific styles for mobile orientation changes */
+    @media screen and (orientation: landscape) and (max-height: 500px) {
+      body {
+        min-height: 100vh;
+        background-size: cover;
+        background-position: center;
+      }
+
+      #map {
+        height: 50vh;
+        min-height: 200px;
+      }
+    }
+
+    @media screen and (orientation: portrait) and (max-width: 700px) {
+      body {
+        min-height: 100vh;
+        background-size: cover;
+        background-position: center;
       }
     }
   </style>
@@ -246,7 +271,27 @@
         'GeoJSON data loaded. Number of features:', geodata.features.length,
         'Filtered with renamed=true:', renamedStreets.features.length,
       );
+
       const map = L.map('map').setView([56.947671425035125, 24.10682991450902], 12);
+
+      function handleOrientationChange() {
+        // Force a repaint of the background.
+        document.body.style.backgroundImage = 'none';
+
+        // Use requestAnimationFrame to ensure the style change is applied.
+        requestAnimationFrame(() => {
+          document.body.style.backgroundImage = "url('background.webp')";
+          setTimeout(map.invalidateSize, 100);
+        });
+      }
+
+      // Listen for orientation changes.
+      window.addEventListener('orientationchange', handleOrientationChange);
+
+      // Also listen for resize events as a fallback.
+      window.addEventListener('resize', () => {
+        setTimeout(map.invalidateSize, 100);
+      });
 
       const tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
