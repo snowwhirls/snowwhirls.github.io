@@ -103,6 +103,15 @@
 </head>
 
 <body>
+  <!--
+  To add another filter:
+  1. Copy paste one of the existing filter sections below (ensure unique IDs).
+  2. Copy-paste one of the init functions (initRenameYearSelect, initTriggerSelect, initThemeSelect)
+      and modify it accordingly. Please note that initRenameYearSelect compares integer values,
+      while initTriggerSelect and initThemeSelect compare string values.
+  3. Update the filter array in the initApp function to include the new filter.
+  4. (optional) Add into onEachFeature function the new property to display in the popup.
+  -->
   <div class="controls-card">
     <label for="rename-year-select">Year:</label>
     <select id="rename-year-select" class="modern-select">
@@ -122,7 +131,6 @@
   <div id='map'>Loading...</div>
 
   <script>
-
     // Collects distinct years from the GeoJSON features and populates the year select dropdown.
     function initRenameYearSelect(features, update) {
       const renameYearSelect = document.getElementById('rename-year-select');
@@ -259,7 +267,6 @@
         console.error('Error loading GeoJSON:', error);
         alert('Error loading GeoJSON data. Please check the console for details.');
       });
-
   </script>
 
 </body>
