@@ -89,6 +89,13 @@
 							</select>
 						</div> <!-- form-group -->
 
+						<div class="form-group">
+							<label for="gender-select">Gender:</label>
+							<select id="gender-select" class="modern-select">
+								<option value="">Select gender</option>
+							</select>
+						</div> <!-- form-group -->
+
 					</div> <!-- form-container -->
 
 				</div> <!-- container -->
@@ -175,6 +182,32 @@
 						};
 					}
 
+					// Collects genders from the GeoJSON features and populates the theme select dropdown.
+					function initGenderSelect(features, update) {
+						const genderSelect = document.getElementById('gender-select');
+						const genders = new Set();
+
+						features.forEach(feature => {
+							if (feature.properties && feature.properties.gender) {
+								genders.add(feature.properties.gender);
+							}
+						});
+
+						const sortedThemes = Array.from(genders).sort();
+						sortedThemes.forEach(gender => {
+							const option = document.createElement('option');
+							option.value = gender;
+							option.textContent = gender;
+							genderSelect.appendChild(option);
+						});
+
+						genderSelect.addEventListener('change', update);
+						return (feature) => {
+							const selectedGender = genderSelect.value;
+							return !selectedGender || feature.properties.gender === selectedGender;
+						};
+					}
+
 					// Initialize the map, setup filter criteria, and add the GeoJSON layer.
 					function initApp(geodata) {
 						// Filter features with rename=true.
@@ -210,7 +243,8 @@
 									const popupContent = `<strong>${feature.properties.nosaukums || 'Unnamed Street'}</strong><br>
               <strong>Renamed:</strong> ${feature.properties.rename_yr || 'N/A'}<br>
               <strong>Trigger:</strong> ${feature.properties.trigger || 'N/A'}<br>
-              <strong>Theme:</strong> ${feature.properties.theme_new || 'N/A'}`;
+              <strong>Theme:</strong> ${feature.properties.theme_new || 'N/A'}<br>
+			  <strong>Gender:</strong> ${feature.properties.gender || 'N/A'}				`;
 									layer.bindPopup(popupContent);
 								},
 							}).addTo(map);
@@ -220,6 +254,7 @@
 							initRenameYearSelect(renamedStreets.features, updateGeoJSONLayer),
 							initTriggerSelect(renamedStreets.features, updateGeoJSONLayer),
 							initThemeSelect(renamedStreets.features, updateGeoJSONLayer),
+							initGenderSelect(renamedStreets.features, updateGeoJSONLayer),
 						];
 
 						console.log('Initialized');
