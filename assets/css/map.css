@@ -1,0 +1,234 @@
+body::before {
+    content: "";
+    position: fixed;
+    /* Or absolute if you prefer */
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(255, 255, 255, 0.7);
+    pointer-events: none;
+    /* So you can still click links, etc. */
+    z-index: 0;
+}
+
+body>* {
+    position: relative;
+    z-index: 1;
+}
+
+.app-container {
+    width: 95vw;
+    position: center;
+    margin: 0 auto;
+}
+
+
+.container {
+    max-width: 80%;
+    margin: 0 auto;
+    margin-top: 20px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+#map {
+    max-width: 80%;
+    max-height: 80%;
+    aspect-ratio: 3/2;
+
+    /* width: calc(100vw - 40px); */
+    margin: 20px auto;
+    /* box-sizing: border-box; */
+
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Responsive layout - automatically switches based on screen width */
+.form-container {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 20px;
+}
+
+/* Large screens - Same line layout */
+@media (min-width: 768px) {
+    .form-container {
+        flex-direction: row;
+        align-items: center;
+        gap: 30px;
+    }
+
+    .form-group {
+        flex: 1;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+    }
+}
+
+/* Small screens - Different lines layout */
+@media (max-width: 767px) {
+    .form-container {
+        flex-direction: column;
+    }
+
+    .form-group {
+        flex-direction: row;
+        align-items: center;
+    }
+
+    .form-group:last-child {
+        margin-bottom: 0;
+    }
+}
+
+label {
+    font-weight: 600;
+    color: #4a5568;
+    font-size: 15px;
+    white-space: nowrap;
+    min-width: 90px;
+    letter-spacing: 0.025em;
+}
+
+/* Large screens - labels above dropdowns */
+@media (min-width: 768px) {
+    label {
+        margin-bottom: 0;
+        min-width: auto;
+        font-size: 16px;
+    }
+}
+
+label {
+    font-weight: 600;
+    color: #4a5568;
+    font-size: 15px;
+    white-space: nowrap;
+    min-width: 90px;
+    letter-spacing: 0.025em;
+}
+
+/* Large screens - labels above dropdowns */
+@media (min-width: 768px) {
+    label {
+        margin-bottom: 0;
+        min-width: auto;
+        font-size: 16px;
+    }
+}
+
+select {
+    padding: 2px 20px;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 16px;
+    background: #ffffff;
+    color: #2d3748;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    width: 100%;
+    box-sizing: border-box;
+    font-weight: 500;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 16px center;
+    background-repeat: no-repeat;
+    background-size: 16px;
+    padding-right: 50px;
+}
+
+select:hover {
+    border-color: #cbd5e0;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+select:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+    transform: translateY(-1px);
+}
+
+select:active {
+    transform: translateY(0);
+}
+
+/* Custom option styling for modern browsers */
+select option {
+    padding: 12px;
+    background: #ffffff;
+    color: #2d3748;
+}
+
+/* Subtle animation on load */
+.form-group {
+    opacity: 0;
+    animation: fadeInUp 0.6s ease-out forwards;
+}
+
+.form-group:nth-child(1) {
+    animation-delay: 0.1s;
+}
+
+.form-group:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.form-group:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Mobile optimizations */
+@media (max-width: 480px) {
+    .container {
+        padding: 24px;
+        margin: 10px;
+        border-radius: 16px;
+    }
+
+    h1 {
+        font-size: 2rem;
+    }
+
+    select {
+        padding: 14px 16px;
+        padding-right: 45px;
+        font-size: 16px;
+    }
+
+    label {
+        min-width: 80px;
+        font-size: 14px;
+    }
+}

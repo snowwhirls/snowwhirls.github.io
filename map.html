@@ -1,273 +1,65 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE HTML>
+<html>
 
 <head>
-  <base target="_top">
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Interactive map</title>
+	<link rel="shortcut icon" type="image/x-icon" href="favicon.ico" />
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+	<link rel="stylesheet" href="assets/css/main.css" />
+	<noscript>
+		<link rel="stylesheet" href="assets/css/noscript.css" />
+	</noscript>
+	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+		integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+	<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+		integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
-  <title>Renamed streets of Riga</title>
-
-  <link rel="shortcut icon" type="image/x-icon" href="favicon.ico" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-
-  <style>
-    html,
-    body {
-      background-image: url('background.webp');
-      background-size: cover;
-      background-repeat: no-repeat;
-      background-position: center;
-      min-height: 100vh;
-      margin: 0;
-      padding: 0;
-    }
-
-    body::before {
-      content: "";
-      position: fixed;
-      /* Or absolute if you prefer */
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: rgba(255, 255, 255, 0.7);
-      pointer-events: none;
-      /* So you can still click links, etc. */
-      z-index: 0;
-    }
-
-    body>* {
-      position: relative;
-      z-index: 1;
-    }
-
-    .app-container {
-      width: 95vw;
-      position: center;
-      margin: 0 auto;
-    }
-
-
-    .container {
-      max-width: 900px;
-      margin: 0 auto;
-      margin-top: 20px;
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(10px);
-      padding: 40px;
-      border-radius: 20px;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-    }
-
-    #map {
-      max-width: 900px;
-      max-height: 900px;
-      aspect-ratio: 1/1;
-
-      /* width: calc(100vw - 40px); */
-      margin: 20px auto;
-      /* box-sizing: border-box; */
-
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(10px);
-      padding: 40px;
-      border-radius: 20px;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-    }
-
-    /* Responsive layout - automatically switches based on screen width */
-    .form-container {
-      display: flex;
-      flex-direction: column;
-      gap: 24px;
-    }
-
-    .form-group {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      gap: 20px;
-    }
-
-    /* Large screens - Same line layout */
-    @media (min-width: 768px) {
-      .form-container {
-        flex-direction: row;
-        align-items: center;
-        gap: 30px;
-      }
-
-      .form-group {
-        flex: 1;
-        flex-direction: column;
-        align-items: stretch;
-        gap: 12px;
-      }
-    }
-
-    /* Small screens - Different lines layout */
-    @media (max-width: 767px) {
-      .form-container {
-        flex-direction: column;
-      }
-
-      .form-group {
-        flex-direction: row;
-        align-items: center;
-      }
-
-      .form-group:last-child {
-        margin-bottom: 0;
-      }
-    }
-
-    label {
-      font-weight: 600;
-      color: #4a5568;
-      font-size: 15px;
-      white-space: nowrap;
-      min-width: 90px;
-      letter-spacing: 0.025em;
-    }
-
-    /* Large screens - labels above dropdowns */
-    @media (min-width: 768px) {
-      label {
-        margin-bottom: 0;
-        min-width: auto;
-        font-size: 16px;
-      }
-    }
-
-    label {
-      font-weight: 600;
-      color: #4a5568;
-      font-size: 15px;
-      white-space: nowrap;
-      min-width: 90px;
-      letter-spacing: 0.025em;
-    }
-
-    /* Large screens - labels above dropdowns */
-    @media (min-width: 768px) {
-      label {
-        margin-bottom: 0;
-        min-width: auto;
-        font-size: 16px;
-      }
-    }
-
-    select {
-      padding: 16px 20px;
-      border: 2px solid #e2e8f0;
-      border-radius: 12px;
-      font-size: 16px;
-      background: #ffffff;
-      color: #2d3748;
-      cursor: pointer;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      width: 100%;
-      box-sizing: border-box;
-      font-weight: 500;
-      appearance: none;
-      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
-      background-position: right 16px center;
-      background-repeat: no-repeat;
-      background-size: 16px;
-      padding-right: 50px;
-    }
-
-    select:hover {
-      border-color: #cbd5e0;
-      transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    }
-
-    select:focus {
-      outline: none;
-      border-color: #667eea;
-      box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
-      transform: translateY(-1px);
-    }
-
-    select:active {
-      transform: translateY(0);
-    }
-
-    /* Custom option styling for modern browsers */
-    select option {
-      padding: 12px;
-      background: #ffffff;
-      color: #2d3748;
-    }
-
-    /* Subtle animation on load */
-    .form-group {
-      opacity: 0;
-      animation: fadeInUp 0.6s ease-out forwards;
-    }
-
-    .form-group:nth-child(1) {
-      animation-delay: 0.1s;
-    }
-
-    .form-group:nth-child(2) {
-      animation-delay: 0.2s;
-    }
-
-    .form-group:nth-child(3) {
-      animation-delay: 0.3s;
-    }
-
-    @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    /* Mobile optimizations */
-    @media (max-width: 480px) {
-      .container {
-        padding: 24px;
-        margin: 10px;
-        border-radius: 16px;
-      }
-
-      h1 {
-        font-size: 2rem;
-      }
-
-      select {
-        padding: 14px 16px;
-        padding-right: 45px;
-        font-size: 16px;
-      }
-
-      label {
-        min-width: 80px;
-        font-size: 14px;
-      }
-    }
-  </style>
+	<link rel="stylesheet" href="assets/css/map.css" />
 </head>
 
-<body>
-  <div class="app-container">
-    <div class="container">
+<body class="is-preload">
+	<!-- Wrapper -->
+	<div id="wrapper">
 
-      <!--
+		<!-- Header -->
+		<header id="header">
+			<div class="inner">
+
+
+				<!-- Nav -->
+				<nav>
+					<ul>
+						<li><a href="#menu">Menu</a></li>
+					</ul>
+				</nav>
+
+			</div>
+		</header>
+
+		<!-- Menu -->
+		<nav id="menu">
+			<h2>Menu</h2>
+			<ul>
+				<li><a href="index.html">Home</a></li>
+				<li><a href="dataset.html">Our Dataset and its Structure</a></li>
+				<li><a href="map.html">Interactive Map</a></li>
+				<li><a href="analysis.html">Analysis</a></li>
+				<li><a href="sources.html">Sources</a></li>
+			</ul>
+		</nav>
+
+		<!-- Main -->
+		<div id="main">
+			<div class="inner">
+				<h1>Interactive Map</h1>
+				<p>
+	This interactive map of Riga, built using Leaflet and based on our customized dataset, allows users to explore the city’s renamed streets through a range of filters. Users can highlight streets by year of renaming, the trigger behind the name change, thematic category (such as cultural identity or geographic reference), gender of the commemorated individual, and area of the city. The map provides an accessible and visual way to analyze patterns in urban toponymy and understand how historical, political, and cultural factors have influenced the street names of Riga.
+</p>
+
+				<div class="container">
+
+					<!--
       To add another filter:
       1. Copy paste one of the existing filter sections below (ensure unique IDs).
       2. Copy-paste one of the init functions (initRenameYearSelect, initTriggerSelect, initThemeSelect)
@@ -277,174 +69,187 @@
       4. (optional) Add into onEachFeature function the new property to display in the popup.
       -->
 
-      <div class="form-container">
+					<div class="form-container">
 
-        <div class="form-group">
-          <label for="rename-year-select">Year:</label>
-          <select id="rename-year-select" class="modern-select">
-            <option value="">Select year</option>
-          </select>
-        </div> <!-- form-group -->
+						<div class="form-group">
+							<label for="rename-year-select">Year:</label>
+							<select id="rename-year-select" class="modern-select">
+								<option value="">Select year</option>
+							</select>
+						</div> <!-- form-group -->
 
-        <div class="form-group">
-          <label for="trigger-select">Trigger:</label>
-          <select id="trigger-select" class="modern-select">
-            <option value="">Select trigger</option>
-          </select>
-        </div> <!-- form-group -->
+						<div class="form-group">
+							<label for="trigger-select">Trigger:</label>
+							<select id="trigger-select" class="modern-select">
+								<option value="">Select trigger</option>
+							</select>
+						</div> <!-- form-group -->
 
-        <div class="form-group">
-          <label for="theme-select">Theme:</label>
-          <select id="theme-select" class="modern-select">
-            <option value="">Select theme</option>
-          </select>
-        </div> <!-- form-group -->
+						<div class="form-group">
+							<label for="theme-select">Theme:</label>
+							<select id="theme-select" class="modern-select">
+								<option value="">Select theme</option>
+							</select>
+						</div> <!-- form-group -->
 
-      </div> <!-- form-container -->
+					</div> <!-- form-container -->
 
-    </div> <!-- container -->
+				</div> <!-- container -->
 
-    <div id='map'>Loading...</div>
-  </div> <!-- app-container -->
+				<div id='map'>Loading...</div>
 
-  <script>
-    // Collects distinct years from the GeoJSON features and populates the year select dropdown.
-    function initRenameYearSelect(features, update) {
-      const renameYearSelect = document.getElementById('rename-year-select');
-      const years = new Set();
 
-      features.forEach(feature => {
-        if (feature.properties && feature.properties.rename_yr) {
-          years.add(feature.properties.rename_yr);
-        }
-      });
+				<script>
+					// Collects distinct years from the GeoJSON features and populates the year select dropdown.
+					function initRenameYearSelect(features, update) {
+						const renameYearSelect = document.getElementById('rename-year-select');
+						const years = new Set();
 
-      const sortedYears = Array.from(years).sort();
-      sortedYears.forEach(year => {
-        const option = document.createElement('option');
-        option.value = year;
-        option.textContent = year;
-        renameYearSelect.appendChild(option);
-      });
+						features.forEach(feature => {
+							if (feature.properties && feature.properties.rename_yr) {
+								years.add(feature.properties.rename_yr);
+							}
+						});
 
-      renameYearSelect.addEventListener('change', update);
-      return (feature) => {
-        const selectedYear = renameYearSelect.value;
-        return !selectedYear || feature.properties.rename_yr === parseInt(selectedYear, 10);
-      };
-    }
+						const sortedYears = Array.from(years).sort();
+						sortedYears.forEach(year => {
+							const option = document.createElement('option');
+							option.value = year;
+							option.textContent = year;
+							renameYearSelect.appendChild(option);
+						});
 
-    // Collects distinct triggers from the GeoJSON features and populates the trigger select dropdown.
-    function initTriggerSelect(features, update) {
-      const triggerSelect = document.getElementById('trigger-select');
-      const triggers = new Set();
+						renameYearSelect.addEventListener('change', update);
+						return (feature) => {
+							const selectedYear = renameYearSelect.value;
+							return !selectedYear || feature.properties.rename_yr === parseInt(selectedYear, 10);
+						};
+					}
 
-      features.forEach(feature => {
-        if (feature.properties && feature.properties.trigger) {
-          triggers.add(feature.properties.trigger);
-        }
-      });
+					// Collects distinct triggers from the GeoJSON features and populates the trigger select dropdown.
+					function initTriggerSelect(features, update) {
+						const triggerSelect = document.getElementById('trigger-select');
+						const triggers = new Set();
 
-      const sortedTriggers = Array.from(triggers).sort();
-      sortedTriggers.forEach(trigger => {
-        const option = document.createElement('option');
-        option.value = trigger;
-        option.textContent = trigger;
-        triggerSelect.appendChild(option);
-      });
+						features.forEach(feature => {
+							if (feature.properties && feature.properties.trigger) {
+								triggers.add(feature.properties.trigger);
+							}
+						});
 
-      triggerSelect.addEventListener('change', update);
-      return (feature) => {
-        const selectedTrigger = triggerSelect.value;
-        return !selectedTrigger || feature.properties.trigger === selectedTrigger;
-      };
-    }
+						const sortedTriggers = Array.from(triggers).sort();
+						sortedTriggers.forEach(trigger => {
+							const option = document.createElement('option');
+							option.value = trigger;
+							option.textContent = trigger;
+							triggerSelect.appendChild(option);
+						});
 
-    // Collects distinct themes from the GeoJSON features and populates the theme select dropdown.
-    function initThemeSelect(features, update) {
-      const themeSelect = document.getElementById('theme-select');
-      const themes = new Set();
+						triggerSelect.addEventListener('change', update);
+						return (feature) => {
+							const selectedTrigger = triggerSelect.value;
+							return !selectedTrigger || feature.properties.trigger === selectedTrigger;
+						};
+					}
 
-      features.forEach(feature => {
-        if (feature.properties && feature.properties.theme_new) {
-          themes.add(feature.properties.theme_new);
-        }
-      });
+					// Collects distinct themes from the GeoJSON features and populates the theme select dropdown.
+					function initThemeSelect(features, update) {
+						const themeSelect = document.getElementById('theme-select');
+						const themes = new Set();
 
-      const sortedThemes = Array.from(themes).sort();
-      sortedThemes.forEach(theme => {
-        const option = document.createElement('option');
-        option.value = theme;
-        option.textContent = theme;
-        themeSelect.appendChild(option);
-      });
+						features.forEach(feature => {
+							if (feature.properties && feature.properties.theme_new) {
+								themes.add(feature.properties.theme_new);
+							}
+						});
 
-      themeSelect.addEventListener('change', update);
-      return (feature) => {
-        const selectedTheme = themeSelect.value;
-        return !selectedTheme || feature.properties.theme_new === selectedTheme;
-      };
-    }
+						const sortedThemes = Array.from(themes).sort();
+						sortedThemes.forEach(theme => {
+							const option = document.createElement('option');
+							option.value = theme;
+							option.textContent = theme;
+							themeSelect.appendChild(option);
+						});
 
-    // Initialize the map, setup filter criteria, and add the GeoJSON layer.
-    function initApp(geodata) {
-      // Filter features with rename=true.
-      const renamedStreets = {
-        type: 'FeatureCollection',
-        features: geodata.features.filter(feature => feature.properties && feature.properties.renamed === true)
-      };
-      console.log(
-        'GeoJSON data loaded. Number of features:', geodata.features.length,
-        'Filtered with renamed=true:', renamedStreets.features.length,
-      );
+						themeSelect.addEventListener('change', update);
+						return (feature) => {
+							const selectedTheme = themeSelect.value;
+							return !selectedTheme || feature.properties.theme_new === selectedTheme;
+						};
+					}
 
-      const map = L.map('map').setView([56.947671425035125, 24.10682991450902], 12);
+					// Initialize the map, setup filter criteria, and add the GeoJSON layer.
+					function initApp(geodata) {
+						// Filter features with rename=true.
+						const renamedStreets = {
+							type: 'FeatureCollection',
+							features: geodata.features.filter(feature => feature.properties && feature.properties.renamed === true)
+						};
+						console.log(
+							'GeoJSON data loaded. Number of features:', geodata.features.length,
+							'Filtered with renamed=true:', renamedStreets.features.length,
+						);
 
-      const tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-      }).addTo(map);
+						const map = L.map('map').setView([56.947671425035125, 24.10682991450902], 12);
 
-      var geodataLayer;
-      function updateGeoJSONLayer() {
-        if (geodataLayer) {
-          map.removeLayer(geodataLayer);
-        }
-        geodataLayer = L.geoJSON(renamedStreets, {
-          filter(feature, layer) {
-            return filters.every(filter => filter(feature));
-          },
-          style(feature) {
-            return { color: '#ff0000', weight: 5, opacity: 0.5 };
-          },
-          onEachFeature(feature, layer) {
-            const popupContent = `<strong>${feature.properties.nosaukums || 'Unnamed Street'}</strong><br>
+						const tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+							maxZoom: 19,
+							attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+						}).addTo(map);
+
+						var geodataLayer;
+						function updateGeoJSONLayer() {
+							if (geodataLayer) {
+								map.removeLayer(geodataLayer);
+							}
+							geodataLayer = L.geoJSON(renamedStreets, {
+								filter(feature, layer) {
+									return filters.every(filter => filter(feature));
+								},
+								style(feature) {
+									return { color: '#ff0000', weight: 5, opacity: 0.5 };
+								},
+								onEachFeature(feature, layer) {
+									const popupContent = `<strong>${feature.properties.nosaukums || 'Unnamed Street'}</strong><br>
               <strong>Renamed:</strong> ${feature.properties.rename_yr || 'N/A'}<br>
               <strong>Trigger:</strong> ${feature.properties.trigger || 'N/A'}<br>
               <strong>Theme:</strong> ${feature.properties.theme_new || 'N/A'}`;
-            layer.bindPopup(popupContent);
-          },
-        }).addTo(map);
-      }
+									layer.bindPopup(popupContent);
+								},
+							}).addTo(map);
+						}
 
-      const filters = [
-        initRenameYearSelect(renamedStreets.features, updateGeoJSONLayer),
-        initTriggerSelect(renamedStreets.features, updateGeoJSONLayer),
-        initThemeSelect(renamedStreets.features, updateGeoJSONLayer),
-      ];
+						const filters = [
+							initRenameYearSelect(renamedStreets.features, updateGeoJSONLayer),
+							initTriggerSelect(renamedStreets.features, updateGeoJSONLayer),
+							initThemeSelect(renamedStreets.features, updateGeoJSONLayer),
+						];
 
-      console.log('Initialized');
-      updateGeoJSONLayer();
-    }
+						console.log('Initialized');
+						updateGeoJSONLayer();
+					}
 
-    fetch('data.geojson')
-      .then(response => response.json())
-      .then(initApp)
-      .catch(error => {
-        console.error('Error loading GeoJSON:', error);
-        alert('Error loading GeoJSON data. Please check the console for details.');
-      });
-  </script>
+					fetch('data.geojson')
+						.then(response => response.json())
+						.then(initApp)
+						.catch(error => {
+							console.error('Error loading GeoJSON:', error);
+							alert('Error loading GeoJSON data. Please check the console for details.');
+						});
+				</script>
+
+			</div>
+		</div>
+
+
+	</div>
+
+	<!-- Scripts -->
+	<script src="assets/js/jquery.min.js"></script>
+	<script src="assets/js/browser.min.js"></script>
+	<script src="assets/js/breakpoints.min.js"></script>
+	<script src="assets/js/util.js"></script>
+	<script src="assets/js/main.js"></script>
 
 </body>
 
