@@ -96,13 +96,29 @@
 								<option value="">Select theme</option>
 							</select>
 						</div> <!-- form-group -->
-
+					</div>
+					<div class="form-container">
 						<div class="form-group">
 							<label for="gender-select">Gender:</label>
 							<select id="gender-select" class="modern-select">
 								<option value="">Select gender</option>
 							</select>
 						</div> <!-- form-group -->
+
+						<div class="form-group">
+							<label for="role-select">Person's role:</label>
+							<select id="role-select" class="modern-select">
+								<option value="">Select role</option>
+							</select>
+						</div> <!-- form-group -->
+
+						<div class="form-group">
+							<label for="area-select">Area:</label>
+							<select id="area-select" class="modern-select">
+								<option value="">Select area</option>
+							</select>
+						</div> <!-- form-group -->
+
 
 					</div> <!-- form-container -->
 
@@ -217,6 +233,59 @@
 						};
 					}
 
+					// Collects distinct personal roles from the GeoJSON features and populates the theme select dropdown.
+					function initRoleSelect(features, update) {
+						const roleSelect = document.getElementById('role-select');
+						const roles = new Set();
+
+						features.forEach(feature => {
+							if (feature.properties && feature.properties.personrole) {
+								roles.add(feature.properties.personrole);
+							}
+						});
+
+						const sortedRoles = Array.from(roles).sort();
+						sortedRoles.forEach(role => {
+							const option = document.createElement('option');
+							option.value = role;
+							option.textContent = role;
+							roleSelect.appendChild(option);
+						});
+
+						roleSelect.addEventListener('change', update);
+						return (feature) => {
+							const selectedRole = roleSelect.value;
+							return !selectedRole || feature.properties.personrole === selectedRole;
+						};
+					}
+
+					// Collects areas from the GeoJSON features and populates the theme select dropdown.
+					function initAreaSelect(features, update) {
+						const areaSelect = document.getElementById('area-select');
+						const areas = new Set();
+
+						features.forEach(feature => {
+							if (feature.properties && feature.properties.area) {
+								areas.add(feature.properties.area);
+							}
+						});
+
+						const sortedThemes = Array.from(areas).sort();
+						sortedThemes.forEach(area => {
+							const option = document.createElement('option');
+							option.value = area;
+							option.textContent = area;
+							areaSelect.appendChild(option);
+						});
+
+						areaSelect.addEventListener('change', update);
+						return (feature) => {
+							const selectedArea = areaSelect.value;
+							return !selectedArea || feature.properties.area === selectedArea;
+						};
+					}
+
+
 					// Initialize the map, setup filter criteria, and add the GeoJSON layer.
 					function initApp(geodata) {
 						// Filter features with rename=true.
@@ -246,14 +315,16 @@
 									return filters.every(filter => filter(feature));
 								},
 								style(feature) {
-									return { color: '#ff0000', weight: 5, opacity: 0.5 };
+									return { color: '#0066ff', weight: 5, opacity: 0.25 };
 								},
 								onEachFeature(feature, layer) {
 									const popupContent = `<strong>${feature.properties.nosaukums || 'Unnamed Street'}</strong><br>
               <strong>Renamed:</strong> ${feature.properties.rename_yr || 'N/A'}<br>
               <strong>Trigger:</strong> ${feature.properties.trigger || 'N/A'}<br>
               <strong>Theme:</strong> ${feature.properties.theme_new || 'N/A'}<br>
-			  <strong>Gender:</strong> ${feature.properties.gender || 'N/A'}				`;
+			  <strong>Gender:</strong> ${feature.properties.gender || 'N/A'}<br>
+			  <strong>Personal role:</strong> ${feature.properties.personrole || 'N/A'}<br>
+			  <strong>Area:</strong> ${feature.properties.area || 'N/A'}					`;
 									layer.bindPopup(popupContent);
 								},
 							}).addTo(map);
@@ -264,6 +335,8 @@
 							initTriggerSelect(renamedStreets.features, updateGeoJSONLayer),
 							initThemeSelect(renamedStreets.features, updateGeoJSONLayer),
 							initGenderSelect(renamedStreets.features, updateGeoJSONLayer),
+							initRoleSelect(renamedStreets.features, updateGeoJSONLayer),
+							initAreaSelect(renamedStreets.features, updateGeoJSONLayer),
 						];
 
 						console.log('Initialized');
