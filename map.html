@@ -132,31 +132,7 @@
 							return !selectedYear || feature.properties.rename_yr === parseInt(selectedYear, 10);
 						};
 					}
-// Collects genders from the GeoJSON features and populates the select dropdown.
-					function initGenderSelect(features, update) {
-						const GenderSelect = document.getElementById('gender-select');
-						const gender = new Set();
 
-						features.forEach(feature => {
-							if (feature.properties && feature.properties.gender) {
-								years.add(feature.properties.gender);
-							}
-						});
-
-						const sortedGender = Array.from(gender).sort();
-						sortedGender.forEach(gender => {
-							const option = document.createElement('option');
-							option.value = gender;
-							option.textContent = gender;
-							GenderSelect.appendChild(option);
-						});
-
-						GenderSelect.addEventListener('change', update);
-						return (feature) => {
-							const selectedGender = renameGenderSelect.value;
-							return !selectedGender || feature.properties.gender === parseInt(selectedGender, 10);
-						};
-					}
 
 					// Collects distinct triggers from the GeoJSON features and populates the trigger select dropdown.
 					function initTriggerSelect(features, update) {
@@ -245,7 +221,7 @@
 									const popupContent = `<strong>${feature.properties.nosaukums || 'Unnamed Street'}</strong><br>
               <strong>Renamed:</strong> ${feature.properties.rename_yr || 'N/A'}<br>
               <strong>Trigger:</strong> ${feature.properties.trigger || 'N/A'}<br>
-	      <strong>gender:</strong> ${feature.properties.gender || 'N/A'}<br>
+	    
               <strong>Theme:</strong> ${feature.properties.theme_new || 'N/A'}`;
 									layer.bindPopup(popupContent);
 								},
@@ -254,7 +230,7 @@
 
 						const filters = [
 							initRenameYearSelect(renamedStreets.features, updateGeoJSONLayer),
-							initGenderSelect(renamedStreets.features, updateGeoJSONLayer),
+							
 							initTriggerSelect(renamedStreets.features, updateGeoJSONLayer),
 							initThemeSelect(renamedStreets.features, updateGeoJSONLayer),
 						];
