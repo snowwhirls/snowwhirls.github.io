@@ -65,6 +65,7 @@ body>* {
     flex-direction: row;
     align-items: center;
     gap: 20px;
+    padding-top: 20px;
 }
 
 /* Large screens - Same line layout */
@@ -106,7 +107,7 @@ label {
     white-space: nowrap;
     min-width: 90px;
     letter-spacing: 0.025em;
-    padding-top: 15px;
+
 }
 
 /* Large screens - labels above dropdowns */
