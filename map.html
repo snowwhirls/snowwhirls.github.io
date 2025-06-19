@@ -320,12 +320,10 @@
 								},
 								onEachFeature(feature, layer) {
 									const popupContent = `<strong>${feature.properties.nosaukums || 'Unnamed Street'}</strong><br>
-              <strong>Renamed:</strong> ${feature.properties.rename_yr || 'N/A'}<br>
-              <strong>Trigger:</strong> ${feature.properties.trigger || 'N/A'}<br>
-              <strong>Theme:</strong> ${feature.properties.theme_new || 'N/A'}<br>
-			  <strong>Gender:</strong> ${feature.properties.gender || 'N/A'}<br>
-			  <strong>Personal role:</strong> ${feature.properties.personrole || 'N/A'}<br>
-			  <strong>Area:</strong> ${feature.properties.area || 'N/A'}					`;
+                <strong>Previous name:</strong> ${feature.properties.Old_name || 'N/A'}<br>
+	        <strong>Renamed:</strong> ${feature.properties.rename_yr || 'N/A'}<br>
+        	strong>Trigger:</strong> ${feature.properties.trigger || 'N/A'}<br>		
+		<strong>Area:</strong> ${feature.properties.area || 'N/A'}					`;
 									layer.bindPopup(popupContent);
 								},
 							}).addTo(map);
