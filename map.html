@@ -95,7 +95,7 @@
 						<div class="form-group">
 							<label for="theme-select">Gender:</label>
 							<select id="theme-select" class="modern-select">
-								<option value="">Select theme</option>
+								<option value="">Select gender</option>
 							</select>
 						</div> <!-- form-group -->
 
@@ -159,6 +159,31 @@
 							return !selectedTrigger || feature.properties.trigger === selectedTrigger;
 						};
 					}
+// Collects distinct gender values from the GeoJSON features and populates the gender select dropdown.
+function initGenderSelect(features, update) {
+	const genderSelect = document.getElementById('gender-select');
+	const genders = new Set();
+
+	features.forEach(feature => {
+		if (feature.properties && feature.properties.gender) {
+			genders.add(feature.properties.gender);
+		}
+	});
+
+	const sortedGenders = Array.from(genders).sort();
+	sortedGenders.forEach(gender => {
+		const option = document.createElement('option');
+		option.value = gender;
+		option.textContent = gender;
+		genderSelect.appendChild(option);
+	});
+
+	genderSelect.addEventListener('change', update);
+	return (feature) => {
+		const selectedGender = genderSelect.value;
+		return !selectedGender || feature.properties.gender === selectedGender;
+	};
+}
 
 					// Collects distinct themes from the GeoJSON features and populates the theme select dropdown.
 					function initThemeSelect(features, update) {
@@ -221,7 +246,7 @@
 									const popupContent = `<strong>${feature.properties.nosaukums || 'Unnamed Street'}</strong><br>
               <strong>Renamed:</strong> ${feature.properties.rename_yr || 'N/A'}<br>
               <strong>Trigger:</strong> ${feature.properties.trigger || 'N/A'}<br>
-	    
+		<strong>Gender:</strong> ${feature.properties.gender || 'N/A'}<br>
               <strong>Theme:</strong> ${feature.properties.theme_new || 'N/A'}`;
 									layer.bindPopup(popupContent);
 								},
@@ -230,7 +255,7 @@
 
 						const filters = [
 							initRenameYearSelect(renamedStreets.features, updateGeoJSONLayer),
-							
+							initGenderSelect(renamedStreets.features, updateGeoJSONLayer);
 							initTriggerSelect(renamedStreets.features, updateGeoJSONLayer),
 							initThemeSelect(renamedStreets.features, updateGeoJSONLayer),
 						];
