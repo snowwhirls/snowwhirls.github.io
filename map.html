@@ -72,7 +72,7 @@
 					<div class="form-container">
 
 						<div class="form-group">
-							<label for="rename-year-select">Year:</label>
+							<label for="rename-year-select">Year renamed:</label>
 							<select id="rename-year-select" class="modern-select">
 								<option value="">Select year</option>
 							</select>
@@ -86,7 +86,14 @@
 						</div> <!-- form-group -->
 
 						<div class="form-group">
-							<label for="theme-select">Theme:</label>
+							<label for="theme-select">New name topic:</label>
+							<select id="theme-select" class="modern-select">
+								<option value="">Select theme</option>
+							</select>
+						</div> <!-- form-group -->
+
+						<div class="form-group">
+							<label for="theme-select">Gender:</label>
 							<select id="theme-select" class="modern-select">
 								<option value="">Select theme</option>
 							</select>
@@ -125,6 +132,7 @@
 							return !selectedYear || feature.properties.rename_yr === parseInt(selectedYear, 10);
 						};
 					}
+
 
 					// Collects distinct triggers from the GeoJSON features and populates the trigger select dropdown.
 					function initTriggerSelect(features, update) {
@@ -213,6 +221,7 @@
 									const popupContent = `<strong>${feature.properties.nosaukums || 'Unnamed Street'}</strong><br>
               <strong>Renamed:</strong> ${feature.properties.rename_yr || 'N/A'}<br>
               <strong>Trigger:</strong> ${feature.properties.trigger || 'N/A'}<br>
+	    
               <strong>Theme:</strong> ${feature.properties.theme_new || 'N/A'}`;
 									layer.bindPopup(popupContent);
 								},
@@ -221,6 +230,7 @@
 
 						const filters = [
 							initRenameYearSelect(renamedStreets.features, updateGeoJSONLayer),
+							
 							initTriggerSelect(renamedStreets.features, updateGeoJSONLayer),
 							initThemeSelect(renamedStreets.features, updateGeoJSONLayer),
 						];
